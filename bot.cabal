@@ -1,0 +1,128 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           bot
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/bot#readme>
+homepage:       https://github.com/githubuser/bot#readme
+bug-reports:    https://github.com/githubuser/bot/issues
+author:         Shilov Anatoliy
+maintainer:     anatolishil@gmail.com
+copyright:      2021 Shilov Anatoliy
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/bot
+
+library
+  exposed-modules:
+      Exceptions.BadConfigException
+      Exceptions.ParseException
+      Exceptions.PatternNotFoundException
+      Lib
+      Models.Configuration
+      Models.Vk.Action
+      Models.Vk.Attachment
+      Models.Vk.Audio
+      Models.Vk.Category
+      Models.Vk.Doc
+      Models.Vk.Geo
+      Models.Vk.Gift
+      Models.Vk.Link
+      Models.Vk.Market
+      Models.Vk.MarketAlbum
+      Models.Vk.Message
+      Models.Vk.Methods.CheckEvents
+      Models.Vk.Methods.GetLongPollServer
+      Models.Vk.Methods.MessageSend
+      Models.Vk.Methods.ResolveScreenName
+      Models.Vk.Photo
+      Models.Vk.PhotoCopy
+      Models.Vk.Price
+      Models.Vk.Section
+      Models.Vk.Sticker
+      Models.Vk.Video
+      Models.Vk.Wall
+      Models.Vk.WallReply
+      Queryable
+      Services.ConfigService
+      Services.HttpServices.VkService.VkService
+      Services.HttpServices.VkService.VkService_5_131
+      Services.ListenerService.ListenerService
+      Services.ListenerService.VkListenerService
+      Services.LoggerService.ConsoleLoggerService
+      Services.LoggerService.LoggerService
+      Services.PatternAIService
+  other-modules:
+      Paths_bot
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , async
+    , base ==4.*
+    , bytestring
+    , hscolour
+    , hspec
+    , http-conduit
+    , random
+    , text
+    , yaml
+  default-language: Haskell2010
+
+executable bot-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_bot
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , async
+    , base ==4.*
+    , bot
+    , bytestring
+    , hscolour
+    , hspec
+    , http-conduit
+    , random
+    , text
+    , yaml
+  default-language: Haskell2010
+
+test-suite bot-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      ConfigServiceSpec
+      ListenerServiceSpec
+      LoggerServiceSpec
+      PatternAIServiceSpec
+      VkServiceSpec
+      Paths_bot
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , async
+    , base ==4.*
+    , bot
+    , bytestring
+    , hscolour
+    , hspec
+    , http-conduit
+    , random
+    , text
+    , yaml
+  default-language: Haskell2010

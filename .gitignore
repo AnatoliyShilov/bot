@@ -1,0 +1,7 @@
+.stack-work/
+.vscode/
+.history/
+app-settings.*
+*.config
+*.http
+*~
