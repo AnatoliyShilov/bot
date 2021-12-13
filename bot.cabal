@@ -28,7 +28,6 @@ library
       Exceptions.BadConfigException
       Exceptions.ParseException
       Exceptions.PatternNotFoundException
-      Lib
       Models.Configuration
       Models.Vk.Action
       Models.Vk.Attachment
@@ -75,6 +74,7 @@ library
     , hspec
     , http-conduit
     , random
+    , regex-compat
     , text
     , yaml
   default-language: Haskell2010
@@ -96,6 +96,7 @@ executable bot-exe
     , hspec
     , http-conduit
     , random
+    , regex-compat
     , text
     , yaml
   default-language: Haskell2010
@@ -123,6 +124,7 @@ test-suite bot-test
     , hspec
     , http-conduit
     , random
+    , regex-compat
     , text
     , yaml
   default-language: Haskell2010

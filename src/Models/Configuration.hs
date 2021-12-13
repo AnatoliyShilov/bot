@@ -2,9 +2,9 @@
 module Models.Configuration where
 
 import Data.Yaml ( FromJSON(parseJSON), withObject, (.:) )
+import Text.Regex ( mkRegex, Regex )
 import qualified Data.Text as T
 import qualified Services.LoggerService.LoggerService as LoggerService
-import qualified Services.PatternAIService as AIService
 
 data Configuration = Configuration {
   vkApiUrl :: T.Text,
@@ -22,7 +22,7 @@ data VkBotConfiguration = VkBotConfiguration {
   groupId :: Int,
   groupName :: T.Text,
   authToken :: T.Text,
-  patterns :: [Pattern]
+  patterns :: [PatternAction]
   } deriving (Show)
 
 instance FromJSON VkBotConfiguration where
@@ -32,13 +32,16 @@ instance FromJSON VkBotConfiguration where
     <*> v .: "auth-token"
     <*> v .: "patterns"
 
-data Pattern = Pattern {
-  query :: [AIService.PatternGramm],
+data PatternAction = PatternAction {
+  regex :: Regex,
   answer :: T.Text
-  } deriving (Show)
+  }
 
-instance FromJSON Pattern where
+instance Show PatternAction where
+  show patternAction = show $ answer patternAction
+
+instance FromJSON PatternAction where
   parseJSON = withObject "Pattern" $ \ v -> do 
-    query <- v .: "query"
+    regex <- v .: "regex"
     answer <- v .: "answer"
-    return $ Pattern { query = AIService.new query, answer = answer }
+    return $ PatternAction { regex = mkRegex regex, answer = answer }

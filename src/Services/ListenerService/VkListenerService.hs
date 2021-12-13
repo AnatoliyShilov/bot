@@ -53,6 +53,7 @@ createListen vkBotConfig loggerService vkService = do
     return $ checkEventsReq { CheckEvents.requestTs = CheckEvents.responseTs checkEventsRes }
     ) checkEventsReq
 
-getAnswers :: [Config.Pattern] -> T.Text -> [T.Text]
-getAnswers patterns input = 
-  mapMaybe (\ pattern -> if isJust $ AIService.match (Config.query pattern) (T.splitOn " " input) then Just $ Config.answer pattern else Nothing) patterns
+-- TODO move to PatternAIService
+getAnswers :: [Config.PatternAction] -> T.Text -> [T.Text]
+getAnswers patternActions input =
+  mapMaybe (\ patternAction -> if isJust $ AIService.match (Config.regex patternAction) input then Just $ Config.answer patternAction else Nothing) patternActions
