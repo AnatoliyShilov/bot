@@ -1,0 +1,22 @@
+# base vk api url
+vk-api-url: https://api.vk.com/method
+# logger config
+logger:
+  # message log level
+  log-level: Info
+vk-bot-list:
+  - it-anshi:
+    # your group id
+    id: 209318335
+    # your group shor name
+    name: it_anshi
+    token: <your auth token here>
+    patterns:
+      - p1:
+        regex: ^[H,h](i|ello).*$
+        answer: Hello ;)
+        attachment: "[photo-209318335_457239017]"
+      - p2:
+        regex: ^.*(big\s)?floppa.*$
+        answer: Russian cat
+        attachment: "[photo-209318335_457239017]"

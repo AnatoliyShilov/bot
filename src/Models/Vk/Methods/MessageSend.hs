@@ -67,8 +67,13 @@ newRequest peerId = do
 
 withChat :: Int -> Request -> IO Request
 withChat chatId request = return request { chatId = Just chatId }
+
 withText :: T.Text -> Request -> IO Request
-withText message request = return request { message = Just message }
+withText message request =
+  return $ if T.null message
+    then request
+    else request { message = Just message }
+
 withAttachment :: Maybe [AttachmentMeta] -> Request -> IO Request
 withAttachment attachment requset = return requset { attachment = attachment }
 
@@ -153,17 +158,17 @@ newtype Response = Response {
   ids :: [Int]
   } deriving (Show)
 
-data Value = Scalar Int | Vector [Int]
+data Values = HasOne Int | HasMany [Int]
 
-valueToResponse :: Value -> Response
-valueToResponse (Scalar id) =
+valueToResponse :: Values -> Response
+valueToResponse (HasOne id) =
   Response { ids = [id] }
-valueToResponse (Vector ids) =
+valueToResponse (HasMany ids) =
   Response { ids = ids }
 
 instance FromJSON Response where
   parseJSON = withObject "Response" $ \ v ->
     asum [
-      Scalar <$> v .: "response",
-      Vector <$> v .: "response"
+      HasOne <$> v .: "response",
+      HasMany <$> v .: "response"
       ] <&> valueToResponse
