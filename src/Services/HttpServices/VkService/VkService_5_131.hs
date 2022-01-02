@@ -32,10 +32,10 @@ data Config = Config {
   -- Vk api url
   apiUrl :: T.Text,
   -- Vk auth token
-  authToken :: T.Text,
-  -- 
+  token :: T.Text,
+  -- Group id
   groupId :: Int,
-
+  -- Group name
   groupName :: T.Text
   }
 
@@ -53,7 +53,7 @@ readConfig :: Config.Configuration -> Config.VkBotConfiguration -> IO Config
 readConfig config botConfig = do
   return $ Config {
     apiUrl = Config.vkApiUrl config,
-    authToken = Config.authToken botConfig,
+    token = Config.token botConfig,
     groupId = Config.groupId botConfig,
     groupName = Config.groupName botConfig
     }
@@ -111,7 +111,7 @@ postQuery handle params url = do
   let apiVersion = version handle
   let loggerService = logger handle
   request <- Http.parseRequest ("POST " <> T.unpack url)
-    <&> Http.setRequestHeader "Authorization" [TE.encodeUtf8 . authToken $ config handle]
+    <&> Http.setRequestHeader "Authorization" [TE.encodeUtf8 . token $ config handle]
     <&> Http.setRequestQueryString (asQuery params <> asQuery apiVersion)
   LoggerService.logDebug loggerService . T.pack . ("Request " <>) $ show request
   Http.httpJSON request

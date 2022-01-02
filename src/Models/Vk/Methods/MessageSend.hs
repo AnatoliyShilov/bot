@@ -12,7 +12,9 @@ module Models.Vk.Methods.MessageSend (
   ) where
 
 import System.Random ( newStdGen, Random(randomR) )
-import Data.List ( intercalate )
+import Data.Maybe ( maybe, mapMaybe )
+import Data.Char ( isDigit )
+import Data.List ( intercalate, stripPrefix )
 import Data.Foldable ( asum )
 import Data.Functor ( (<&>) )
 import Data.Aeson ( (.:), withObject, FromJSON(parseJSON) )
@@ -67,8 +69,8 @@ withChat :: Int -> Request -> IO Request
 withChat chatId request = return request { chatId = Just chatId }
 withText :: T.Text -> Request -> IO Request
 withText message request = return request { message = Just message }
-withAttachment :: [AttachmentMeta] -> Request -> IO Request
-withAttachment attachment requset = return requset { attachment = Just attachment }
+withAttachment :: Maybe [AttachmentMeta] -> Request -> IO Request
+withAttachment attachment requset = return requset { attachment = attachment }
 
 instance ToQueryItem [AttachmentMeta] where
   toQueryItem name attachments =
@@ -83,9 +85,9 @@ instance Queryable Request where
         ]
       addChat = append ("chat_id", chatId)
       addMessage = append ("message", message)
-      addAttachment = append ("attachment", attachment)
+      addAttachment attachment = append ("attachment", Just attachment) defaultQuery
     in
-      addChat . addMessage $ addAttachment defaultQuery
+      addChat . addMessage $ maybe defaultQuery addAttachment attachment
 
 -- <type><owner_id>_<media_id>
 data AttachmentMeta = AttachmentMeta {
@@ -98,7 +100,16 @@ data AttachmentMeta = AttachmentMeta {
   }
 
 instance Show AttachmentMeta where
-  show (AttachmentMeta attachmentType ownerId mediaId) = show attachmentType <> show ownerId <> "_" <> show mediaId
+  show (AttachmentMeta attachmentType ownerId mediaId) = show attachmentType <> "-" <> show ownerId <> "_" <> show mediaId
+
+instance Read AttachmentMeta where
+  readsPrec _ str =
+    let
+      (attachmentType, '-' : ownerMediaRest) = break (== '-') str
+      (ownerId, '_' : mediaRest) = span isDigit ownerMediaRest
+      (mediaId, rest) = span isDigit mediaRest
+    in
+      [(AttachmentMeta { attachmentType = read attachmentType, ownerId = read ownerId, mediaId = read mediaId }, rest)]
 
 -- Тип медиавложения
 data AttachmentType
@@ -125,6 +136,18 @@ instance Show AttachmentType where
   show Wall = "wall"
   show Market = "market"
   show Poll = "poll"
+
+instance Read AttachmentType where
+  readsPrec _ str =
+    mapMaybe (\ prefix -> stripPrefix (fst prefix) str <&> (,) (snd prefix)) [
+      ("photo", Photo),
+      ("video", Video),
+      ("audio", Audio),
+      ("doc", Doc),
+      ("wall", Wall),
+      ("market", Market),
+      ("poll", Poll)
+      ]
 
 newtype Response = Response {
   ids :: [Int]

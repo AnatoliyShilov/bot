@@ -43,17 +43,20 @@ createListen vkBotConfig loggerService vkService = do
         let text = Message.text message
         unless (T.null text) $ do
           -- Match message
-          let answers = getAnswers (Config.patterns vkBotConfig) text
-          unless (null answers) $ do
+          let actions = getActions (Config.patterns vkBotConfig) text
+          LoggerService.logDebug loggerService ("Input: " <> text)
+          LoggerService.logDebug loggerService ("Actions: " <> T.pack (show actions))
+          unless (null actions) $ do
             -- Send answer back
             messageSendReq <- MessageSend.newRequest fromId >>=
-              MessageSend.withText (head answers)
+              MessageSend.withText (Config.answer $ head actions) >>=
+              MessageSend.withAttachment (Config.attachment $ head actions)
             void $ VkService.messageSend vkService messageSendReq
       ) objects
     return $ checkEventsReq { CheckEvents.requestTs = CheckEvents.responseTs checkEventsRes }
     ) checkEventsReq
 
 -- TODO move to PatternAIService
-getAnswers :: [Config.PatternAction] -> T.Text -> [T.Text]
-getAnswers patternActions input =
-  mapMaybe (\ patternAction -> if isJust $ AIService.match (Config.regex patternAction) input then Just $ Config.answer patternAction else Nothing) patternActions
+getActions :: [Config.PatternAction] -> T.Text -> [Config.PatternAction]
+getActions patternActions input =
+  filter (\ patternAction -> isJust $ AIService.match (Config.regex patternAction) input) patternActions
