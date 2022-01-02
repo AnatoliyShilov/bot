@@ -74,7 +74,7 @@ library
     , hspec
     , http-conduit
     , random
-    , regex-compat
+    , regex-compat-tdfa
     , text
     , yaml
   default-language: Haskell2010
@@ -96,7 +96,7 @@ executable bot-exe
     , hspec
     , http-conduit
     , random
-    , regex-compat
+    , regex-compat-tdfa
     , text
     , yaml
   default-language: Haskell2010
@@ -124,7 +124,7 @@ test-suite bot-test
     , hspec
     , http-conduit
     , random
-    , regex-compat
+    , regex-compat-tdfa
     , text
     , yaml
   default-language: Haskell2010

@@ -10,4 +10,4 @@ main = do
   configServiceSpec
   patternAIServiceSpec
   -- vkServiceSpec
-  -- listenerServiceSpec
+  listenerServiceSpec

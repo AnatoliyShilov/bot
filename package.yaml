@@ -26,7 +26,7 @@ dependencies:
 - random
 - async
 - hscolour
-- regex-compat
+- regex-compat-tdfa
 - yaml
 - hspec
 - http-conduit
